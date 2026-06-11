@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MaintainPro</title>
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0066ff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="MaintainPro">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#ffffff;--sur:#f8f9fc;--sur2:#eef2f7;--brd:#d1d5db;--acc:#0066ff;--acc2:#2b6cf5;--grn:#16a34a;--yel:#ca8a04;--red:#dc2626;--org:#ea580c;--txt:#0f172a;--txt2:#475569;--txt3:#64748b}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+/* LOGIN */
+#LS{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);z-index:999;transition:opacity .5s}
+.lb{background:var(--sur);border:1px solid var(--brd);border-radius:20px;padding:44px;width:400px;box-shadow:0 30px 70px rgba(0,0,0,.5)}
+.llo{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.llico{width:46px;height:46px;background:linear-gradient(135deg,var(--acc2),var(--acc));border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.llh1{font-family:'Syne',sans-serif;font-size:21px;font-weight:800}
+.llh1 span{color:var(--acc)}
+.llsub{color:var(--txt2);font-size:12px;margin-top:2px}
+.ll{font-size:10px;color:var(--txt2);font-weight:600;letter-spacing:.7px;text-transform:uppercase;display:block;margin-bottom:6px}
+.li,.ls{width:100%;background:var(--sur2);border:1px solid var(--brd);border-radius:9px;padding:11px 14px;color:var(--txt);font-family:'DM Sans';font-size:13px;outline:none;margin-bottom:14px;transition:border-color .2s}
+.li:focus,.ls:focus{border-color:var(--acc)}
+.lbtn{width:100%;background:linear-gradient(135deg,var(--acc2),var(--acc));border:none;border-radius:9px;padding:13px;color:#fff;font-family:'Syne';font-size:14px;font-weight:700;cursor:pointer}
+.lbtn:hover{opacity:.9}
+.lerr{color:var(--red);font-size:11px;text-align:center;margin-top:8px;display:none}
+/* APP */
+#APP{display:none;flex-direction:column;min-height:100vh}
+/* TOPBAR */
+.topbar{height:58px;background:var(--sur);border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:20px;padding:0 18px;position:sticky;top:0;z-index:50}
+.logo{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;display:flex;align-items:center;gap:7px;flex-shrink:0}
+.logo-i{width:28px;height:28px;background:linear-gradient(135deg,var(--acc2),var(--acc));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px}
+.logo span{color:var(--acc)}
+.nav{display:flex;gap:2px;flex:1;overflow-x:auto}
+.nb{padding:6px 11px;border-radius:7px;border:none;background:transparent;color:var(--txt2);font-family:'DM Sans';font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s}
+.nb:hover{background:var(--sur2);color:var(--txt)}
+.nb.on{background:rgba(0,212,255,.1);color:var(--acc)}
+.ubadge{display:flex;align-items:center;gap:7px;background:var(--sur2);border-radius:9px;padding:5px 11px;flex-shrink:0;cursor:pointer;user-select:none}
+.uav{width:25px;height:25px;border-radius:50%;background:linear-gradient(135deg,var(--acc2),var(--acc));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+/* CONTENT */
+.cnt{flex:1;padding:20px;max-width:1400px;width:100%;margin:0 auto}
+/* PAGES */
+.pg{display:none}
+.pg.on{display:block;animation:fd .3s ease}
+@keyframes fd{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+/* HEADER */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap}
+.pht{font-family:'Syne',sans-serif;font-size:21px;font-weight:800}
+.pht span{color:var(--acc)}
+.phs{color:var(--txt2);font-size:12px;margin-top:2px}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:8px;padding:8px 15px;font-family:'DM Sans';font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.bp{background:linear-gradient(135deg,var(--acc2),var(--acc));color:#fff}
+.bp:hover{opacity:.9;transform:translateY(-1px)}
+.bs{background:var(--sur2);border:1px solid var(--brd);color:var(--txt2)}
+.bs:hover{border-color:var(--acc);color:var(--acc)}
+.bsm{padding:5px 10px;font-size:11px}
+.bdl{background:rgba(255,61,87,.1);border:1px solid rgba(255,61,87,.25);color:var(--red)}
+/* STAT CARDS */
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.sc{background:#ffffff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:15px 17px;position:relative;overflow:hidden}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--acc2),var(--acc))}
+.sl{font-size:10px;color:var(--txt2);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
+.sv{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;line-height:1;margin-bottom:4px}
+.sh{font-size:11px;color:var(--txt2)}
+.si{position:absolute;right:13px;top:13px;font-size:22px;opacity:.25;font-family:Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif}
+#pg-reports .sc .si{opacity:1!important;font-size:28px;right:12px;top:12px;color:var(--txt);text-shadow:none;background:rgba(15,23,42,.08);padding:8px;border-radius:50%;}
+/* CARD */
+.card{background:#ffffff;border:1px solid rgba(15,23,42,.08);border-radius:12px;padding:16px;margin-bottom:14px}
+.ct{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:13px;display:flex;align-items:center;justify-content:space-between}
+.ctl{display:flex;align-items:center;gap:7px}
+.dot{width:6px;height:6px;border-radius:50%}
+/* TOOLBAR */
+.tlbr{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.sw{display:flex;align-items:center;gap:7px;background:var(--sur2);border:1px solid var(--brd);border-radius:8px;padding:7px 11px;flex:1;min-width:150px}
+.sw input{background:none;border:none;outline:none;color:var(--txt);font-family:'DM Sans';font-size:12px;flex:1}
+.sw input::placeholder{color:var(--txt3)}
+.fsl{background:var(--sur2);border:1px solid var(--brd);border-radius:8px;padding:7px 10px;color:var(--txt2);font-family:'DM Sans';font-size:12px;outline:none;cursor:pointer}
+/* TABLE */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{text-align:left;padding:8px 10px;color:var(--txt2);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid rgba(15,23,42,.08);white-space:nowrap}
+tbody td{padding:10px 10px;border-bottom:1px solid rgba(15,23,42,.06);vertical-align:middle}
+tbody tr:hover{background:rgba(15,23,42,.03)}
+.badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.bc{background:rgba(255,61,87,.15);color:var(--red)}
+.bh{background:rgba(255,109,0,.15);color:var(--org)}
+.bm{background:rgba(255,214,0,.15);color:var(--yel)}
+.bl{background:rgba(0,230,118,.15);color:var(--grn)}
+.ba{background:rgba(0,230,118,.15);color:var(--grn)}
+.bst{background:rgba(0,212,255,.1);color:var(--acc)}
+.bmt{background:rgba(255,214,0,.15);color:var(--yel)}
+.bpl{background:rgba(255,214,0,.15);color:var(--yel)}
+.bip{background:rgba(0,102,255,.15);color:var(--acc2)}
+.bco{background:rgba(0,230,118,.15);color:var(--grn)}
+.bdld{background:rgba(255,61,87,.15);color:var(--red)}
+.bex{background:rgba(0,230,118,.15);color:var(--grn)}
+.bsr{background:rgba(0,212,255,.1);color:var(--acc)}
+.bjr{background:rgba(255,214,0,.15);color:var(--yel)}
+.btr{background:rgba(255,109,0,.15);color:var(--org)}
+.ab{display:flex;gap:4px}
+.acb{width:26px;height:26px;border-radius:6px;border:1px solid var(--brd);background:var(--sur2);color:var(--txt2);cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.acb:hover{border-color:var(--acc);color:var(--acc)}
+.acb.del:hover{border-color:var(--red);color:var(--red)}
+/* OVERLAY & MODAL */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.ov.open{display:flex}
+.modal{background:var(--sur);border:1px solid var(--brd);border-radius:16px;padding:24px;width:490px;max-width:95vw;max-height:90vh;overflow-y:auto;animation:fd .3s ease}
+.mhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.mti{font-family:'Syne',sans-serif;font-size:15px;font-weight:800}
+.mcl{background:var(--sur2);border:1px solid var(--brd);border-radius:7px;width:28px;height:28px;cursor:pointer;color:var(--txt2);font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.mcl:hover{color:var(--red);border-color:var(--red)}
+.fg{margin-bottom:13px}
+.fl{font-size:10px;color:var(--txt2);font-weight:600;letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:5px}
+.fi,.fs,.fta{width:100%;background:var(--sur2);border:1px solid var(--brd);border-radius:8px;padding:9px 11px;color:var(--txt);font-family:'DM Sans';font-size:12px;outline:none;transition:border-color .2s}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--acc)}
+.fta{resize:vertical;min-height:60px}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mft{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;padding-top:13px;border-top:1px solid var(--brd)}
+/* DASHBOARD */
+.dg{display:grid;grid-template-columns:2fr 1fr;gap:13px;margin-bottom:13px}
+.ali{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:8px;margin-bottom:7px;border:1px solid;transition:filter .15s}
+.ali:hover{filter:brightness(.94)}
+.alr{background:rgba(255,61,87,.07);border-color:rgba(255,61,87,.2)}
+.aly{background:rgba(255,214,0,.07);border-color:rgba(255,214,0,.2)}
+.alt{font-size:12px;font-weight:600}
+.als{font-size:11px;color:var(--txt2);margin-top:1px}
+.kg{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.ki{background:var(--sur2);border-radius:9px;padding:11px;text-align:center}
+.kv{font-family:'Syne',sans-serif;font-size:21px;font-weight:800}
+.kn{font-size:10px;color:var(--txt2);margin-top:2px;text-transform:uppercase;letter-spacing:.4px}
+.wr{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--brd)}
+.wr:last-child{border-bottom:none}
+.wnum{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--acc);width:30px;flex-shrink:0}
+.wi{flex:1}
+.wt{font-size:12px;font-weight:500}
+.ws{font-size:11px;color:var(--txt2);margin-top:1px}
+/* MINI BARS */
+.mb{display:flex;flex-direction:column;gap:8px}
+.mbr{display:flex;align-items:center;gap:8px}
+.mbl{font-size:11px;color:var(--txt2);width:72px;flex-shrink:0}
+.mbt{flex:1;height:5px;background:var(--sur2);border-radius:3px;overflow:hidden}
+.mbf{height:100%;border-radius:3px}
+.mbv{font-size:11px;font-weight:600;width:24px;text-align:right}
+/* CALENDAR */
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.cml{font-family:'Syne',sans-serif;font-size:14px;font-weight:700}
+.cnb{display:flex;gap:5px}
+.cnbt{background:var(--sur2);border:1px solid var(--brd);border-radius:7px;padding:5px 10px;color:var(--txt2);cursor:pointer;font-size:11px;transition:all .2s}
+.cnbt:hover{border-color:var(--acc);color:var(--acc)}
+.cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cdh{text-align:center;font-size:10px;color:var(--txt2);font-weight:600;padding:4px 0;text-transform:uppercase}
+.cc{min-height:68px;background:var(--sur2);border-radius:8px;padding:6px;border:1px solid transparent;cursor:pointer}
+.cc:hover{border-color:var(--brd)}
+.cc.td{border-color:var(--acc);background:rgba(0,212,255,.05)}
+.cc.om{opacity:.3}
+.cnum{font-size:11px;font-weight:600;color:var(--txt2);margin-bottom:3px}
+.cc.td .cnum{color:var(--acc)}
+.cev{font-size:9px;padding:2px 4px;border-radius:3px;margin-bottom:2px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.evb{background:rgba(0,102,255,.25);color:#6ea8ff}
+.evg{background:rgba(0,230,118,.2);color:var(--grn)}
+.evy{background:rgba(255,214,0,.2);color:var(--yel)}
+.evr{background:rgba(255,61,87,.2);color:var(--red)}
+/* REPORT */
+.rb{background:var(--sur2);border-radius:9px;padding:14px;margin-bottom:13px}
+.rr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--brd);font-size:12px}
+.rr:last-child{border-bottom:none}
+.rr label{color:var(--txt2)}
+.sb{display:flex;gap:10px;margin-top:10px}
+.ss{flex:1;text-align:center}
+.ssl{font-size:10px;color:var(--txt2);margin-bottom:4px}
+.ssa{height:48px;border:1px dashed var(--brd);border-radius:7px}
+/* CONFIRM */
+.cfb{background:var(--sur);border:1px solid var(--red);border-radius:13px;padding:22px;width:300px;text-align:center}
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--sur);border:1px solid var(--grn);border-radius:9px;padding:11px 16px;font-size:12px;font-weight:500;color:var(--grn);z-index:9999;transform:translateY(60px);opacity:0;transition:all .3s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.err{border-color:var(--red);color:var(--red)}
+/* EMPTY */
+.es{text-align:center;padding:36px;color:var(--txt2)}
+.es .ei{font-size:32px;margin-bottom:8px}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--brd);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="LS">
+  <div class="lb">
+    <div class="llo"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 0-3.16.52L7.5 4.7A7.9 7.9 0 0 0 6 5.88L3.88 5.5A10 10 0 0 0 2 9.16L3.3 11A8 8 0 0 0 3.3 13L2 14.84a10 10 0 0 0 1.88 3.66L6 18.12a7.9 7.9 0 0 0 1.5 1.18l1.34 2.18A10 10 0 0 0 12 22a10 10 0 0 0 3.16-.52l1.34-2.18A7.9 7.9 0 0 0 18 18.12l2.12.38A10 10 0 0 0 22 14.84L20.7 13a8 8 0 0 0 0-2L22 9.16a10 10 0 0 0-1.88-3.66L18 5.88a7.9 7.9 0 0 0-1.5-1.18L15.16 2.52A10 10 0 0 0 12 2z"/><circle cx="12" cy="12" r="3"/></svg><div><div class="llh1">Maintain<span>Pro</span></div><div class="llsub">Maintenance Management Platform</div></div></div>
+    <label class="ll">Username</label>
+    <select class="ls" id="lUser"></select>
+    <label class="ll">Password</label>
+    <input type="password" class="li" id="lPass" placeholder="Password (1234)">
+    <div class="lerr" id="lErr"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Wrong password. Try: 1234</div>
+    <button class="lbtn" onclick="doLogin()">Sign In <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="APP">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="logo"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 0-3.16.52L7.5 4.7A7.9 7.9 0 0 0 6 5.88L3.88 5.5A10 10 0 0 0 2 9.16L3.3 11A8 8 0 0 0 3.3 13L2 14.84a10 10 0 0 0 1.88 3.66L6 18.12a7.9 7.9 0 0 0 1.5 1.18l1.34 2.18A10 10 0 0 0 12 22a10 10 0 0 0 3.16-.52l1.34-2.18A7.9 7.9 0 0 0 18 18.12l2.12.38A10 10 0 0 0 22 14.84L20.7 13a8 8 0 0 0 0-2L22 9.16a10 10 0 0 0-1.88-3.66L18 5.88a7.9 7.9 0 0 0-1.5-1.18L15.16 2.52A10 10 0 0 0 12 2z"/><circle cx="12" cy="12" r="3"/></svg>Maintain<span>Pro</span></div>
+    <nav class="nav">
+      <button class="nb on"  onclick="goPage('dashboard',this)"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg> Dashboard</button>
+      <button class="nb"     onclick="goPage('equipment',this)"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg> Equipment</button>
+      <button class="nb"     onclick="goPage('spareparts',this)"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> Spare Parts</button>
+      <button class="nb"     onclick="goPage('failures',this)"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Failures</button>
+      <button class="nb"     onclick="goPage('technicians',this)"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v2z"/><path d="M10 10V5a2 2 0 1 1 4 0v5"/><path d="M4 15v-3a8 8 0 0 1 16 0v3"/></svg> Technicians</button>
+      <button class="nb"     onclick="goPage('workorders',this)"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg> Work Orders</button>
+      <button class="nb"     onclick="goPage('planning',this)"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Planning</button>
+      <button class="nb"     onclick="goPage('reports',this)"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg> Reports</button>
+    </nav>
+    
+    <button id="installBtn" onclick="installApp()" style="display:none;align-items:center;gap:6px;background:linear-gradient(135deg,var(--acc2),var(--acc));border:none;border-radius:8px;padding:6px 12px;color:#fff;font-family:DM Sans,sans-serif;font-size:11px;font-weight:600;cursor:pointer;flex-shrink:0" title="Install App"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Install</button>
+    <div class="ubadge" onclick="openProfile()" role="button" tabindex="0"><div class="uav" id="topAv">Z</div><span style="font-size:12px;font-weight:500" id="topName">Zakaria</span><span id="topRole" class="badge ba" style="font-size:10px;padding:2px 7px">Admin</span></div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="cnt">
+
+    <!-- ── DASHBOARD ── -->
+    <div class="pg on" id="pg-dashboard">
+      <div class="ph">
+        <div><div class="pht">Dashboard <span>Overview</span></div><div class="phs" id="ddate"></div></div>
+        <button class="btn bp" onclick="openModal('mWO'); prepWO()">+ New Work Order</button>
+      </div>
+      <div class="sg" id="dStats"></div>
+      <div class="dg">
+        <div class="card">
+          <div class="ct"><div class="ctl"><div class="dot" style="background:var(--red)"></div>Maintenance Alerts</div><span id="alCnt" style="font-size:11px;color:var(--txt2)"></span></div>
+          <div id="dAlerts"></div>
+        </div>
+        <div class="card">
+          <div class="ct"><div class="ctl"><div class="dot"></div>KPI Indicators</div></div>
+          <div class="kg" id="dKPI"></div>
+          <div style="margin-top:14px">
+            <div class="ct" style="margin-bottom:10px"><div class="ctl"><div class="dot" style="background:var(--org)"></div>Criticality Split</div></div>
+            <div class="mb" id="dCrit"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ct"><div class="ctl"><div class="dot" style="background:var(--acc2)"></div>Recent Work Orders</div>
+          <button class="btn bs bsm" onclick="goPage('workorders',document.querySelector('[data-page=workorders]'))">View All</button>
+        </div>
+        <div id="dWO"></div>
+      </div>
+    </div>
+
+    <!-- ── EQUIPMENT ── -->
+    <div class="pg" id="pg-equipment">
+      <div class="ph">
+        <div><div class="pht">Mining Equipment <span>Registry</span></div><div class="phs" id="eqLbl"></div></div>
+        <button class="btn bp" onclick="openEqModal()">+ Add Equipment</button>
+      </div>
+      <div class="card">
+        <div class="tlbr">
+          <div class="sw"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="eqSearch" placeholder="Search equipment..." oninput="renderEq()"></div>
+          <select class="fsl" id="eqFcrit" onchange="renderEq()"><option value="">All Criticality</option><option>Critical</option><option>High</option><option>Medium</option><option>Low</option></select>
+          <select class="fsl" id="eqFstat" onchange="renderEq()"><option value="">All Status</option><option>Active</option><option>Standby</option><option>Maintenance</option></select>
+        </div>
+        <div class="tw"><table><thead><tr><th>N°</th><th>Name</th><th>Type</th><th>Location</th><th>Brand / Model</th><th>Criticality</th><th>Status</th><th>Next Maint.</th><th>Observations</th><th>Actions</th></tr></thead><tbody id="eqBody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- ── SPARE PARTS ── -->
+    <div class="pg" id="pg-spareparts">
+      <div class="ph">
+        <div><div class="pht">Spare Parts <span>Inventory</span></div><div class="phs" id="spLbl"></div></div>
+        <button class="btn bp" onclick="openSpModal()">+ Add Part</button>
+      </div>
+      <div class="card">
+        <div class="tlbr">
+          <div class="sw"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="spSearch" placeholder="Search parts..." oninput="renderSp()"></div>
+          <select class="fsl" id="spFstat" onchange="renderSp()"><option value="">All Status</option><option>In Stock</option><option>Low Stock</option><option>Out of Stock</option></select>
+          <select class="fsl" id="spFeq" onchange="renderSp()"><option value="">All Equipment</option></select>
+        </div>
+        <div class="tw"><table><thead><tr><th>N°</th><th>Code</th><th>Part Name</th><th>Equipment</th><th>Qty in Stock</th><th>Reorder Level</th><th>Unit Price</th><th>Total Value</th><th>Status</th><th>Supplier</th><th>Actions</th></tr></thead><tbody id="spBody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- ── FAILURES ── -->
+    <div class="pg" id="pg-failures">
+      <div class="ph">
+        <div><div class="pht">Equipment Failure <span>History</span></div><div class="phs" id="flLbl"></div></div>
+        <button class="btn bp" onclick="openFlModal()">+ Log Failure</button>
+      </div>
+      <div class="card">
+        <div class="tlbr">
+          <div class="sw"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="flSearch" placeholder="Search failures..." oninput="renderFl()"></div>
+          <select class="fsl" id="flFeq" onchange="renderFl()"><option value="">All Equipment</option></select>
+          <select class="fsl" id="flFsev" onchange="renderFl()"><option value="">All Severity</option><option>Critical</option><option>High</option><option>Medium</option><option>Low</option></select>
+        </div>
+        <div class="tw"><table><thead><tr><th>N°</th><th>Date</th><th>Equipment</th><th>Type</th><th>Severity</th><th>Description</th><th>Downtime(h)</th><th>Root Cause</th><th>Resolution</th><th>Actions</th></tr></thead><tbody id="flBody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- ── TECHNICIANS ── -->
+    <div class="pg" id="pg-technicians">
+      <div class="ph">
+        <div><div class="pht">Maintenance <span>Technicians</span></div><div class="phs" id="tchLbl"></div></div>
+        <button class="btn bp" onclick="openTchModal()">+ Add Technician</button>
+      </div>
+      <div class="card">
+        <div class="tlbr">
+          <div class="sw"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="tchSearch" placeholder="Search technicians..." oninput="renderTch()"></div>
+          <select class="fsl" id="tchFspec" onchange="renderTch()"><option value="">All Specialties</option><option>Electromechanics</option><option>Hydraulics</option><option>Mechanics</option><option>Automation</option><option>Electricity</option></select>
+          <select class="fsl" id="tchFstat" onchange="renderTch()"><option value="">All Status</option><option>Active</option><option>Standby</option><option>On Leave</option></select>
+        </div>
+        <div class="tw"><table><thead><tr><th>N°</th><th>Name</th><th>Specialty</th><th>Level</th><th>Phone</th><th>Email</th><th>Status</th><th>Notes</th><th>Actions</th></tr></thead><tbody id="tchBody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- ── WORK ORDERS ── -->
+    <div class="pg" id="pg-workorders">
+      <div class="ph">
+        <div><div class="pht">Maintenance <span>Work Orders</span></div><div class="phs" id="woLbl"></div></div>
+        <button class="btn bp" onclick="openModal('mWO'); prepWO()">+ New Work Order</button>
+      </div>
+      <div class="card">
+        <div class="tlbr">
+          <div class="sw"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="woSearch" placeholder="Search orders..." oninput="renderWo()"></div>
+          <select class="fsl" id="woFstat" onchange="renderWo()"><option value="">All Status</option><option>Planned</option><option>In Progress</option><option>Delayed</option><option>Completed</option></select>
+          <select class="fsl" id="woFtype" onchange="renderWo()"><option value="">All Types</option><option>Preventive</option><option>Corrective</option><option>Inspection</option></select>
+        </div>
+        <div class="tw"><table><thead><tr><th>N°</th><th>Type</th><th>Equipment</th><th>Technician</th><th>Priority</th><th>Start</th><th>End</th><th>Status</th><th>Actions</th></tr></thead><tbody id="woBody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- ── PLANNING ── -->
+    <div class="pg" id="pg-planning">
+      <div class="ph">
+        <div><div class="pht">Maintenance <span>Planning</span></div><div class="phs">Visual calendar of interventions</div></div>
+        <button class="btn bp" onclick="openModal('mWO'); prepWO()">+ Schedule</button>
+      </div>
+      <div class="card">
+        <div class="ch">
+          <div class="cml" id="calLbl"></div>
+          <div class="cnb">
+            <button class="cnbt" onclick="calNav(-1)">← Prev</button>
+            <button class="cnbt" onclick="calToday()">Today</button>
+            <button class="cnbt" onclick="calNav(1)">Next →</button>
+          </div>
+        </div>
+        <div class="cgrid" id="calGrid"></div>
+      </div>
+    </div>
+
+    <!-- ── REPORTS ── -->
+    <div class="pg" id="pg-reports">
+      <div class="ph"><div><div class="pht">Reports & <span>Analytics</span></div><div class="phs">KPIs and maintenance statistics</div></div></div>
+      <div class="sg" id="repStats"></div>
+      <div class="dg">
+        <div class="card"><div class="ct"><div class="ctl"><div class="dot"></div>Technician Workload</div></div><div class="mb" id="repWL"></div></div>
+        <div class="card">
+          <div class="ct"><div class="ctl"><div class="dot" style="background:var(--grn)"></div>Maintenance Type Split</div></div>
+          <div id="repSplit"></div>
+          <div style="margin-top:16px">
+            <div style="font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-weight:600">Criticality Distribution</div>
+            <div class="mb" id="repCrit"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /cnt -->
+</div><!-- /APP -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ══ MODALS ══ -->
+
+<!-- Equipment -->
+<div class="ov" id="mEq">
+  <div class="modal">
+    <div class="mhd"><div class="mti" id="mEqTitle">Add Equipment</div><button class="mcl" onclick="closeModal('mEq')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <input type="hidden" id="eqId">
+    <div class="fg"><label class="fl">Equipment Name *</label><input class="fi" id="eqName" placeholder="e.g. COMPRESSEUR AIR 2"></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Type *</label><select class="fs" id="eqType"><option>Machine Tool</option><option>Centrifugal Pump</option><option>Electric Motor</option><option>Compressor</option><option>Generator</option><option>Conveyor</option><option>Hydraulic System</option><option>Other</option></select></div>
+      <div class="fg"><label class="fl">Location *</label><input class="fi" id="eqLoc" placeholder="e.g. Workshop A"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Brand</label><input class="fi" id="eqBrand" placeholder="e.g. Siemens"></div>
+      <div class="fg"><label class="fl">Model</label><input class="fi" id="eqModel" placeholder="e.g. SK25"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Criticality *</label><select class="fs" id="eqCrit"><option>Critical</option><option>High</option><option selected>Medium</option><option>Low</option></select></div>
+      <div class="fg"><label class="fl">Status *</label><select class="fs" id="eqStat"><option>Active</option><option>Standby</option><option>Maintenance</option></select></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Commission Date</label><input type="date" class="fi" id="eqDate"></div>
+      <div class="fg"><label class="fl">Next Maintenance</label><input type="date" class="fi" id="eqNext"></div>
+    </div>
+    <div class="fg"><label class="fl">Observations</label><textarea class="fta" id="eqObs" placeholder="Notes, observations..."></textarea></div>
+    <div class="mft"><button class="btn bs" onclick="closeModal('mEq')">Cancel</button><button class="btn bp" onclick="saveEq()"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Save</button></div>
+  </div>
+</div>
+
+<!-- Spare Part -->
+<div class="ov" id="mSp">
+  <div class="modal">
+    <div class="mhd"><div class="mti" id="mSpTitle">Add Spare Part</div><button class="mcl" onclick="closeModal('mSp')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <input type="hidden" id="spId">
+    <div class="fr">
+      <div class="fg"><label class="fl">Part Code *</label><input class="fi" id="spCode" placeholder="e.g. R01"></div>
+      <div class="fg"><label class="fl">Part Name *</label><input class="fi" id="spName" placeholder="e.g. Hydraulic Seal Kit"></div>
+    </div>
+    <div class="fg"><label class="fl">Compatible Equipment *</label><select class="fs" id="spEq"></select></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Qty in Stock *</label><input type="number" class="fi" id="spQty" placeholder="0" min="0"></div>
+      <div class="fg"><label class="fl">Reorder Level *</label><input type="number" class="fi" id="spReorder" placeholder="5" min="0"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Unit Price (DZD)</label><input type="number" class="fi" id="spPrice" placeholder="0" min="0"></div>
+      <div class="fg"><label class="fl">Supplier</label><input class="fi" id="spSupplier" placeholder="e.g. KSB Algeria"></div>
+    </div>
+    <div class="fg"><label class="fl">Notes</label><textarea class="fta" id="spNotes" placeholder="Storage location, batch number..."></textarea></div>
+    <div class="mft"><button class="btn bs" onclick="closeModal('mSp')">Cancel</button><button class="btn bp" onclick="saveSp()"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Save</button></div>
+  </div>
+</div>
+
+<!-- Failure -->
+<div class="ov" id="mFl">
+  <div class="modal">
+    <div class="mhd"><div class="mti" id="mFlTitle">Log Failure</div><button class="mcl" onclick="closeModal('mFl')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <input type="hidden" id="flId">
+    <div class="fr">
+      <div class="fg"><label class="fl">Date *</label><input type="date" class="fi" id="flDate"></div>
+      <div class="fg"><label class="fl">Equipment *</label><select class="fs" id="flEq"></select></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Failure Type</label><select class="fs" id="flType"><option>Mechanical</option><option>Electrical</option><option>Hydraulic</option><option>Software</option><option>Other</option></select></div>
+      <div class="fg"><label class="fl">Severity *</label><select class="fs" id="flSev"><option>Critical</option><option>High</option><option>Medium</option><option>Low</option></select></div>
+    </div>
+    <div class="fg"><label class="fl">Description *</label><textarea class="fta" id="flDesc" placeholder="What happened? What were the symptoms?"></textarea></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Root Cause</label><textarea class="fta" id="flRoot" placeholder="Why did it fail?"></textarea></div>
+      <div class="fg"><label class="fl">Resolution</label><textarea class="fta" id="flRes" placeholder="How was it fixed?"></textarea></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Downtime (hours) *</label><input type="number" class="fi" id="flDown" placeholder="0" min="0" step="0.5"></div>
+      <div class="fg"><label class="fl">Next Maintenance Date</label><input type="date" class="fi" id="flNextMaint"></div>
+    </div>
+    <div class="mft"><button class="btn bs" onclick="closeModal('mFl')">Cancel</button><button class="btn bp" onclick="saveFl()"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Log</button></div>
+  </div>
+</div>
+
+<!-- Technician -->
+<div class="ov" id="mTch">
+  <div class="modal">
+    <div class="mhd"><div class="mti" id="mTchTitle">Add Technician</div><button class="mcl" onclick="closeModal('mTch')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <input type="hidden" id="tchId">
+    <div class="fg"><label class="fl">Full Name *</label><input class="fi" id="tchName" placeholder="First and last name"></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Specialty *</label><select class="fs" id="tchSpec"><option>Electromechanics</option><option>Hydraulics</option><option>Mechanics</option><option>Automation</option><option>Electricity</option></select></div>
+      <div class="fg"><label class="fl">Level</label><select class="fs" id="tchLevel"><option>Expert</option><option>Senior</option><option>Junior</option><option>Trainee</option></select></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Phone</label><input class="fi" id="tchPhone" placeholder="0XXXXXXXXX"></div>
+      <div class="fg"><label class="fl">Email</label><input type="email" class="fi" id="tchEmail" placeholder="name@email.com"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Status</label><select class="fs" id="tchStat"><option>Active</option><option>Standby</option><option>On Leave</option></select></div>
+      <div class="fg"><label class="fl">Address</label><input class="fi" id="tchAddr" placeholder="City, Algeria"></div>
+    </div>
+    <div class="fg"><label class="fl">Notes</label><textarea class="fta" id="tchNotes" placeholder="Additional notes..."></textarea></div>
+    <div class="mft"><button class="btn bs" onclick="closeModal('mTch')">Cancel</button><button class="btn bp" onclick="saveTch()"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Save</button></div>
+  </div>
+</div>
+
+<!-- Work Order -->
+<div class="ov" id="mWO">
+  <div class="modal">
+    <div class="mhd"><div class="mti" id="mWOTitle">New Work Order</div><button class="mcl" onclick="closeModal('mWO')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <input type="hidden" id="woId">
+    <div class="fr">
+      <div class="fg"><label class="fl">Type *</label><select class="fs" id="woType"><option>Preventive</option><option>Corrective</option><option>Inspection</option></select></div>
+      <div class="fg"><label class="fl">Priority *</label><select class="fs" id="woPrio"><option>High</option><option>Medium</option><option>Low</option></select></div>
+    </div>
+    <div class="fg"><label class="fl">Equipment *</label><select class="fs" id="woEq"></select></div>
+    <div class="fg"><label class="fl">Technician *</label><select class="fs" id="woTech"></select></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Start Date *</label><input type="date" class="fi" id="woStart"></div>
+      <div class="fg"><label class="fl">End Date *</label><input type="date" class="fi" id="woEnd"></div>
+    </div>
+    <div class="fg"><label class="fl">Status</label><select class="fs" id="woStat"><option>Planned</option><option>In Progress</option><option>Delayed</option><option>Completed</option></select></div>
+    <div class="fg"><label class="fl">Description</label><textarea class="fta" id="woDesc" placeholder="Describe the intervention..."></textarea></div>
+    <div class="mft"><button class="btn bs" onclick="closeModal('mWO')">Cancel</button><button class="btn bp" onclick="saveWo()"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Create</button></div>
+  </div>
+</div>
+
+<!-- Report View -->
+<div class="ov" id="mRep">
+  <div class="modal">
+    <div class="mhd"><div class="mti">Intervention Report</div><button class="mcl" onclick="closeModal('mRep')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="rb">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:14px">MAINTAINPRO</div><div id="repNum" style="font-size:11px;color:var(--txt2)"></div></div>
+      <div class="rr"><label>Equipment</label><span id="repEq" style="font-weight:600"></span></div>
+      <div class="rr"><label>Technician</label><span id="repTech"></span></div>
+      <div class="rr"><label>Type</label><span id="repType"></span></div>
+      <div class="rr"><label>Priority</label><span id="repPrio"></span></div>
+      <div class="rr"><label>Period</label><span id="repPeriod"></span></div>
+      <div class="rr"><label>Status</label><span id="repStat"></span></div>
+      <div class="rr"><label>Description</label><span id="repDesc" style="max-width:55%;text-align:right;font-size:11px"></span></div>
+    </div>
+    <div class="fg"><label class="fl">Work Performed</label><textarea class="fta" id="repWork" placeholder="Describe what was done..."></textarea></div>
+    <div class="fg"><label class="fl">Spare Parts Used</label><input class="fi" id="repParts" placeholder="e.g. R01, R03..."></div>
+    <div class="sb">
+      <div class="ss"><div class="ssl">Director Visa</div><div class="ssa"></div></div>
+      <div class="ss"><div class="ssl">Authorized Signatory</div><div class="ssa"></div></div>
+    </div>
+    <div class="mft"><button class="btn bs" onclick="closeModal('mRep')">Close</button><button class="btn bp" onclick="window.print()"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print</button></div>
+  </div>
+</div>
+
+<!-- Profile -->
+<div class="ov" id="mProfile">
+  <div class="modal">
+    <div class="mhd"><div class="mti">Profile</div><button class="mcl" onclick="closeModal('mProfile')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="fg"><label class="fl">Current User</label><div class="fi" style="background:var(--sur2);border:none;cursor:default;"> <span id="profileName" style="font-weight:600;color:var(--txt)"></span> </div></div>
+    <div class="mft"><button class="btn bs" onclick="closeModal('mProfile')">Close</button><button class="btn bs" onclick="openUsers()">Manage Users</button><button class="btn bp" onclick="logout()">Logout / Switch User</button></div>
+  </div>
+</div>
+
+<!-- User Management -->
+<div class="ov" id="mUsers">
+  <div class="modal">
+    <div class="mhd"><div class="mti">User Management</div><button class="mcl" onclick="closeModal('mUsers')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <!-- Inline add/edit form -->
+    <div id="userForm" style="display:none;background:var(--sur2);border-radius:10px;padding:14px;margin-bottom:14px">
+      <div class="mti" id="userFormTitle" style="margin-bottom:12px;font-size:13px">Add User</div>
+      <input type="hidden" id="uId">
+      <div class="fr">
+        <div class="fg"><label class="fl">Name *</label><input class="fi" id="uName" placeholder="Full name"></div>
+        <div class="fg"><label class="fl">Password</label><input class="fi" id="uPass" type="password" placeholder="Default: 1234"></div>
+      </div>
+      <div class="fg"><label class="fl">Role</label>
+        <select class="fi" id="uRole">
+          <option value="worker">Worker — Log failures only</option>
+          <option value="admin">Admin — Full access</option>
+        </select>
+      </div>
+      <div class="mft" style="margin-top:10px">
+        <button class="btn bs" onclick="closeUserForm()">Cancel</button>
+        <button class="btn bp" onclick="saveUser()"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Save</button>
+      </div>
+    </div>
+    <div class="fg"><button class="btn bp" onclick="openUserForm()">+ Add User</button></div>
+    <div class="card"><div class="tlbr"><div style="flex:1;font-weight:700">Users</div></div>
+      <div class="tw"><table><thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Actions</th></tr></thead><tbody id="userBody"></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Delete -->
+<div class="ov" id="mConfirm">
+  <div class="cfb">
+    <div style="font-size:30px;margin-bottom:8px"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>️</div>
+    <div style="font-family:Syne,sans-serif;font-weight:800;font-size:14px;margin-bottom:7px">Delete Record?</div>
+    <div style="font-size:12px;color:var(--txt2);margin-bottom:16px">This action cannot be undone.</div>
+    <div style="display:flex;gap:8px;justify-content:center">
+      <button class="btn bs" onclick="closeModal('mConfirm')">Cancel</button>
+      <button class="btn bdl" id="cfOk">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══ DATA ══
+var D = {
+  eq:[
+    {id:1,name:'PRIMARY JAW CRUSHER',type:'Jaw Crusher',loc:'Crushing Plant A',brand:'Metso',model:'C120',crit:'Critical',stat:'Active',date:'2018-03-15',next:'2026-05-20',obs:'Primary crushing of limestone'},
+    {id:2,name:'CONE CRUSHER SECONDARY',type:'Cone Crusher',loc:'Crushing Plant A',brand:'Sandvik',model:'CH430',crit:'High',stat:'Active',date:'2019-07-22',next:'2026-05-15',obs:'Secondary crushing to 40mm'},
+    {id:3,name:'VIBRATING SCREEN 3-DECK',type:'Vibrating Screen',loc:'Screening Area',brand:'Metso',model:'CVB2060',crit:'Medium',stat:'Active',date:'2020-01-10',next:'2026-05-25',obs:'Classifies crushed rock into sizes'},
+    {id:4,name:'BELT CONVEYOR BC-01',type:'Belt Conveyor',loc:'Transfer Line 1',brand:'ContiTech',model:'ST1600',crit:'Medium',stat:'Active',date:'2017-11-05',next:'2026-05-10',obs:'Transports crushed material'},
+    {id:5,name:'WHEEL LOADER CAT 988',type:'Wheel Loader',loc:'Loading Yard',brand:'Caterpillar',model:'988H',crit:'High',stat:'Active',date:'2016-09-18',next:'2026-04-30',obs:'Loads crushed rock into trucks'},
+    {id:6,name:'DUMP TRUCK VOLVO A40',type:'Dump Truck',loc:'Haul Road',brand:'Volvo',model:'A40G',crit:'High',stat:'Standby',date:'2021-02-28',next:'2026-05-05',obs:'Hauls rock from quarry to plant'},
+    {id:7,name:'IMPACT CRUSHER TERTIARY',type:'Impact Crusher',loc:'Crushing Plant B',brand:'Hazemag',model:'APK 60',crit:'Medium',stat:'Maintenance',date:'2019-12-03',next:'2026-05-12',obs:'Tertiary crushing for fine aggregates'},
+    {id:8,name:'STACKER CONVEYOR SC-02',type:'Stacker Conveyor',loc:'Stockpile Area',brand:'Superior',model:'TeleStacker',crit:'Low',stat:'Active',date:'2020-06-14',next:'2026-05-18',obs:'Builds stockpiles of finished product'},
+    {id:9,name:'GENERATOR SET 500KW',type:'Generator',loc:'Power House',brand:'Caterpillar',model:'C32',crit:'Critical',stat:'Active',date:'2022-01-20',next:'2026-05-08',obs:'Backup power for crushing plant'},
+    {id:10,name:'AIR COMPRESSOR ATLAS',type:'Air Compressor',loc:'Workshop',brand:'Atlas Copco',model:'GA37',crit:'Medium',stat:'Active',date:'2021-08-12',next:'2026-05-22',obs:'Compressed air for pneumatic tools'},
+    {id:11,name:'HYDRAULIC EXCAVATOR',type:'Excavator',loc:'Quarry Face',brand:'Komatsu',model:'PC400',crit:'High',stat:'Active',date:'2018-05-30',next:'2026-05-14',obs:'Excavates raw limestone'},
+    {id:12,name:'DUST SUPPRESSION SYSTEM',type:'Dust Collector',loc:'Plant Wide',brand:'Donaldson',model:'Torit',crit:'Low',stat:'Active',date:'2020-10-25',next:'2026-05-28',obs:'Controls dust emissions'},
+    {id:13,name:'CONTROL ROOM PANEL',type:'Control System',loc:'Control Room',brand:'Siemens',model:'S7-1500',crit:'Critical',stat:'Active',date:'2019-04-08',next:'2026-05-16',obs:'PLC controls entire plant'},
+  ],
+  sp:[
+    {id:1,code:'SP001',name:'Jaw Crusher Liners',eq:'PRIMARY JAW CRUSHER',qty:8,reorder:3,price:45000,supplier:'Metso Parts',notes:'Manganese steel liners'},
+    {id:2,code:'SP002',name:'Cone Crusher Mantle',eq:'CONE CRUSHER SECONDARY',qty:2,reorder:1,price:28000,supplier:'Sandvik',notes:'High manganese mantle'},
+    {id:3,code:'SP003',name:'Screen Mesh Panels',eq:'VIBRATING SCREEN 3-DECK',qty:12,reorder:4,price:8500,supplier:'Metso',notes:'40mm mesh size'},
+    {id:4,code:'SP004',name:'Conveyor Belt 1600mm',eq:'BELT CONVEYOR BC-01',qty:0,reorder:2,price:15000,supplier:'ContiTech',notes:'URGENT: Belt worn out'},
+    {id:5,code:'SP005',name:'Loader Bucket Teeth',eq:'WHEEL LOADER CAT 988',qty:6,reorder:3,price:3200,supplier:'Caterpillar',notes:'Heavy duty teeth set'},
+    {id:6,code:'SP006',name:'Truck Tires 29.5R25',eq:'DUMP TRUCK VOLVO A40',qty:4,reorder:2,price:8500,supplier:'Michelin',notes:'Off-road tires'},
+    {id:7,code:'SP007',name:'Impact Crusher Blow Bars',eq:'IMPACT CRUSHER TERTIARY',qty:5,reorder:2,price:12000,supplier:'Hazemag',notes:'High chrome bars'},
+    {id:8,code:'SP008',name:'Hydraulic Oil Filter',eq:'HYDRAULIC EXCAVATOR',qty:15,reorder:5,price:450,supplier:'Komatsu',notes:'Return line filter'},
+    {id:9,code:'SP009',name:'Air Filter Elements',eq:'AIR COMPRESSOR ATLAS',qty:10,reorder:3,price:1200,supplier:'Atlas Copco',notes:'Intake filters'},
+    {id:10,code:'SP010',name:'PLC Input Module',eq:'CONTROL ROOM PANEL',qty:3,reorder:1,price:2500,supplier:'Siemens',notes:'Digital input module'},
+    {id:11,code:'SP011',name:'Dust Filter Bags',eq:'DUST SUPPRESSION SYSTEM',qty:20,reorder:8,price:180,supplier:'Donaldson',notes:'Replacement filter bags'},
+    {id:12,code:'SP012',name:'Generator Spark Plugs',eq:'GENERATOR SET 500KW',qty:12,reorder:4,price:85,supplier:'Caterpillar',notes:'Iridium spark plugs'},
+  ],
+  fl:[
+    {id:1,date:'2025-04-20',eq:'PRIMARY JAW CRUSHER',type:'Mechanical',sev:'Critical',desc:'Jaw crusher jammed with oversized boulder. Machine stopped automatically.',root:'Boulder larger than feed opening entered crusher.',res:'Removed boulder with hydraulic jack, inspected liners.',down:6.5},
+    {id:2,date:'2025-04-15',eq:'BELT CONVEYOR BC-01',type:'Mechanical',sev:'High',desc:'Conveyor belt slipped off rollers, material spillage occurred.',root:'Belt tension lost due to worn tensioner.',res:'Retensioned belt, replaced worn rollers.',down:4.0},
+    {id:3,date:'2025-04-10',eq:'CONE CRUSHER SECONDARY',type:'Mechanical',sev:'Medium',desc:'Cone crusher producing oversized product, poor crushing efficiency.',root:'Mantle worn beyond acceptable limits.',res:'Replaced mantle and concave liners.',down:8.0},
+    {id:4,date:'2025-03-28',eq:'WHEEL LOADER CAT 988',type:'Mechanical',sev:'High',desc:'Loader hydraulic system leaking, reduced lifting capacity.',root:'Hydraulic hose burst due to abrasion.',res:'Replaced hydraulic hose, flushed system.',down:3.5},
+    {id:5,date:'2025-03-20',eq:'CONTROL ROOM PANEL',type:'Electrical',sev:'Critical',desc:'PLC system crashed, entire plant shutdown.',root:'Power surge damaged input module.',res:'Replaced faulty module, installed surge protector.',down:12.0},
+    {id:6,date:'2025-03-15',eq:'IMPACT CRUSHER TERTIARY',type:'Mechanical',sev:'Medium',desc:'Impact crusher making unusual noise, vibration increased.',root:'Blow bars worn, causing imbalance.',res:'Replaced all blow bars, balanced rotor.',down:5.5},
+    {id:7,date:'2025-03-08',eq:'AIR COMPRESSOR ATLAS',type:'Mechanical',sev:'Low',desc:'Compressor running hot, oil consumption high.',root:'Air intake filters clogged with dust.',res:'Cleaned and replaced air filters.',down:1.0},
+    {id:8,date:'2025-02-25',eq:'DUST SUPPRESSION SYSTEM',type:'Mechanical',sev:'Medium',desc:'Dust collection efficiency reduced, visible emissions.',root:'Filter bags torn and worn.',res:'Replaced damaged filter bags.',down:2.5},
+    {id:9,date:'2025-02-18',eq:'HYDRAULIC EXCAVATOR',type:'Hydraulic',sev:'High',desc:'Excavator arm movement sluggish, power loss.',root:'Hydraulic pump cavitation due to low oil level.',res:'Refilled hydraulic oil, replaced filters.',down:4.5},
+    {id:10,date:'2025-02-10',eq:'VIBRATING SCREEN 3-DECK',type:'Mechanical',sev:'Medium',desc:'Screen not classifying properly, material segregation issues.',root:'Screen mesh panels torn.',res:'Replaced damaged mesh panels.',down:3.0},
+  ],
+  tch:[
+    {id:1,name:'Karim Bennani',spec:'Mechanics',level:'Expert',phone:'612345678',email:'karim.b@miningco.dz',stat:'Active',addr:'Setif',notes:'Heavy equipment specialist'},
+    {id:2,name:'Fatima Zahra',spec:'Electricity',level:'Senior',phone:'656786789',email:'fatima.z@miningco.dz',stat:'Active',addr:'Setif',notes:'Electrical systems and PLC'},
+    {id:3,name:'Ahmed Tazi',spec:'Hydraulics',level:'Senior',phone:'667980934',email:'ahmed.t@miningco.dz',stat:'Active',addr:'Setif',notes:'Hydraulic systems expert'},
+    {id:4,name:'Samir Khelil',spec:'Automation',level:'Expert',phone:'665123456',email:'samir.k@miningco.dz',stat:'Active',addr:'Setif',notes:'Control systems and SCADA'},
+    {id:5,name:'Leila Mansouri',spec:'Mechanics',level:'Senior',phone:'678123456',email:'leila.m@miningco.dz',stat:'Active',addr:'Setif',notes:'Crusher maintenance'},
+    {id:6,name:'Omar Belkacem',spec:'Electricity',level:'Senior',phone:'654789652',email:'omar.b@miningco.dz',stat:'Standby',addr:'Setif',notes:'Generator and power systems'},
+    {id:7,name:'Nadia Hamdi',spec:'Mechanics',level:'Junior',phone:'661234567',email:'nadia.h@miningco.dz',stat:'Active',addr:'Setif',notes:'Conveyor systems'},
+    {id:8,name:'Mohamed Cherif',spec:'Hydraulics',level:'Expert',phone:'669876543',email:'mohamed.c@miningco.dz',stat:'Active',addr:'Setif',notes:'Mobile equipment hydraulics'},
+    {id:9,name:'Amina Bouzid',spec:'Automation',level:'Senior',phone:'662468135',email:'amina.b@miningco.dz',stat:'Active',addr:'Setif',notes:'Process control optimization'},
+  ],
+  wo:[
+    {id:1,type:'Corrective',eq:'PRIMARY JAW CRUSHER',tech:'Karim Bennani',prio:'Critical',start:'2025-04-25',end:'2025-04-27',stat:'In Progress',desc:'Replace worn jaw liners and inspect frame'},
+    {id:2,type:'Preventive',eq:'BELT CONVEYOR BC-01',tech:'Nadia Hamdi',prio:'High',start:'2025-04-22',end:'2025-04-24',stat:'Planned',desc:'Monthly belt inspection and tension check'},
+    {id:3,type:'Corrective',eq:'CONTROL ROOM PANEL',tech:'Samir Khelil',prio:'Critical',start:'2025-04-20',end:'2025-04-21',stat:'Completed',desc:'Replace damaged PLC input module'},
+    {id:4,type:'Preventive',eq:'CONE CRUSHER SECONDARY',tech:'Leila Mansouri',prio:'Medium',start:'2025-04-28',end:'2025-04-30',stat:'Planned',desc:'Quarterly mantle inspection and adjustment'},
+    {id:5,type:'Corrective',eq:'WHEEL LOADER CAT 988',tech:'Mohamed Cherif',prio:'High',start:'2025-04-15',end:'2025-04-16',stat:'Completed',desc:'Replace burst hydraulic hose'},
+    {id:6,type:'Preventive',eq:'AIR COMPRESSOR ATLAS',tech:'Omar Belkacem',prio:'Low',start:'2025-04-18',end:'2025-04-19',stat:'Completed',desc:'Air filter replacement and oil check'},
+    {id:7,type:'Corrective',eq:'DUST SUPPRESSION SYSTEM',tech:'Amina Bouzid',prio:'Medium',start:'2025-04-12',end:'2025-04-13',stat:'Completed',desc:'Replace torn filter bags'},
+    {id:8,type:'Preventive',eq:'PRIMARY JAW CRUSHER',tech:'Karim Bennani',prio:'Critical',start:'2026-05-18',end:'2026-05-19',stat:'Planned',desc:'Inspect jaw plates and lubrication system'},
+    {id:9,type:'Preventive',eq:'VIBRATING SCREEN 3-DECK',tech:'Nadia Hamdi',prio:'Medium',start:'2026-05-20',end:'2026-05-21',stat:'Planned',desc:'Replace worn screen meshes and check deck tension'},
+    {id:10,type:'Preventive',eq:'AIR COMPRESSOR ATLAS',tech:'Omar Belkacem',prio:'Low',start:'2026-05-22',end:'2026-05-22',stat:'Planned',desc:'Perform compressor air intake service and oil level check'},
+    {id:11,type:'Preventive',eq:'BELT CONVEYOR BC-01',tech:'Nadia Hamdi',prio:'High',start:'2026-05-24',end:'2026-05-25',stat:'Planned',desc:'Conveyor belt inspection and alignment'},
+    {id:12,type:'Preventive',eq:'GENERATOR SET 500KW',tech:'Omar Belkacem',prio:'High',start:'2026-05-16',end:'2026-05-16',stat:'Planned',desc:'Generator load test and oil level inspection'},
+    {id:13,type:'Preventive',eq:'HYDRAULIC EXCAVATOR',tech:'Ahmed Tazi',prio:'High',start:'2026-05-26',end:'2026-05-27',stat:'Planned',desc:'Hydraulic system inspection and hose condition check'},
+    {id:14,type:'Preventive',eq:'IMPACT CRUSHER TERTIARY',tech:'Leila Mansouri',prio:'Medium',start:'2026-05-28',end:'2026-05-29',stat:'Planned',desc:'Inspect rotor balance and blow bar wear'},
+    {id:15,type:'Preventive',eq:'VIBRATING SCREEN 3-DECK',tech:'Nadia Hamdi',prio:'Medium',start:'2026-06-02',end:'2026-06-03',stat:'Planned',desc:'Quarterly screen deck maintenance and mesh replacement'},
+    {id:16,type:'Preventive',eq:'PRIMARY JAW CRUSHER',tech:'Karim Bennani',prio:'Critical',start:'2026-06-06',end:'2026-06-07',stat:'Planned',desc:'Inspect crusher feed opening and grease bearings'},
+    {id:17,type:'Preventive',eq:'BELT CONVEYOR BC-01',tech:'Nadia Hamdi',prio:'High',start:'2026-06-10',end:'2026-06-10',stat:'Planned',desc:'Replace worn conveyor rollers and check tracking'},
+    {id:18,type:'Preventive',eq:'AIR COMPRESSOR ATLAS',tech:'Omar Belkacem',prio:'Low',start:'2026-06-14',end:'2026-06-14',stat:'Planned',desc:'Check compressor drain and replace oil filter'},
+    {id:19,type:'Preventive',eq:'GENERATOR SET 500KW',tech:'Omar Belkacem',prio:'High',start:'2026-06-18',end:'2026-06-18',stat:'Planned',desc:'Run generator under load and verify control panel readings'},
+    {id:20,type:'Preventive',eq:'DUMP TRUCK VOLVO A40',tech:'Ahmed Tazi',prio:'High',start:'2026-05-05',end:'2026-05-07',stat:'Planned',desc:'Overdue: truck tires inspection and brake system check'},
+    {id:21,type:'Preventive',eq:'STACKER CONVEYOR SC-02',tech:'Nadia Hamdi',prio:'Medium',start:'2026-05-18',end:'2026-05-19',stat:'Planned',desc:'Overdue: stacker conveyor belt tension and roller inspection'},
+  ],
+  nEq:14, nSp:13, nFl:11, nTch:10, nWo:22,
+  users:[
+    {id:1,name:'Zakaria',password:'1234',role:'admin'},
+    {id:2,name:'Aziez',password:'1234',role:'admin'}
+  ],
+  nUsers:3
+};
+
+// Persistence: save/load to localStorage
+function saveStorage(){
+  try{
+    localStorage.setItem('maintainpro_data', JSON.stringify({
+      eq: D.eq, sp: D.sp, fl: D.fl, tch: D.tch, wo: D.wo, users: D.users,
+      nEq: D.nEq, nSp: D.nSp, nFl: D.nFl, nTch: D.nTch, nWo: D.nWo, nUsers: D.nUsers
+    }));
+  }catch(e){ console.warn('Save failed', e); }
+}
+
+function loadStorage(){
+  try{
+    var s = localStorage.getItem('maintainpro_data');
+    if(!s) return;
+    var p = JSON.parse(s);
+    if(p.eq) D.eq = p.eq;
+    if(p.sp) D.sp = p.sp;
+    if(p.fl) D.fl = p.fl;
+    if(p.tch) D.tch = p.tch;
+    if(p.wo) D.wo = p.wo;
+    if(p.users){
+      D.users = p.users;
+      // Migrate: ensure roles exist — Zakaria & Aziez are always admin
+      D.users.forEach(function(u){
+        if(!u.role){
+          u.role = (u.name==='Zakaria' || u.name==='Aziez') ? 'admin' : 'worker';
+        }
+      });
+    }
+    D.nEq = p.nEq || (D.eq.length ? Math.max.apply(null, D.eq.map(function(x){return x.id;}))+1 : D.nEq);
+    D.nSp = p.nSp || (D.sp.length ? Math.max.apply(null, D.sp.map(function(x){return x.id;}))+1 : D.nSp);
+    D.nFl = p.nFl || (D.fl.length ? Math.max.apply(null, D.fl.map(function(x){return x.id;}))+1 : D.nFl);
+    D.nTch = p.nTch || (D.tch.length ? Math.max.apply(null, D.tch.map(function(x){return x.id;}))+1 : D.nTch);
+    D.nWo = p.nWo || (D.wo.length ? Math.max.apply(null, D.wo.map(function(x){return x.id;}))+1 : D.nWo);
+    D.nUsers = p.nUsers || (D.users.length ? Math.max.apply(null, D.users.map(function(x){return x.id;}))+1 : D.nUsers);
+  }catch(e){ console.warn('Load failed', e); }
+}
+
+// Load persisted data if present
+loadStorage();
+
+// ══ SYNC: auto-complete WOs past their end date and update equipment next dates ══
+function syncData(){
+  var today = new Date(); today.setHours(0,0,0,0);
+  D.wo.forEach(function(w){
+    if(w.stat==='Completed') return;
+    if(!w.end) return;
+    var endDate = new Date(w.end); endDate.setHours(0,0,0,0);
+    if(endDate <= today){
+      w.stat = 'Completed';
+      var eqRec = D.eq.find(function(e){ return e.name === w.eq; });
+      if(eqRec){
+        var currentNext = eqRec.next ? new Date(eqRec.next) : null;
+        if(!currentNext || endDate >= currentNext){
+          eqRec.next = w.end;
+        }
+        if(eqRec.stat === 'Maintenance') eqRec.stat = 'Active';
+      }
+    }
+  });
+  saveStorage();
+}
+syncData();
+
+// Populate login select from users
+function renderUserSelect(){
+  var sel = T('lUser');
+  if(!sel) return;
+  sel.innerHTML = D.users.map(function(u){ return '<option value="'+u.name+'">'+u.name+'</option>'; }).join('');
+}
+renderUserSelect();
+// ══ UTILS ══
+function T(id){ return document.getElementById(id); }
+function toast(m,e){ var t=T('toast'); t.textContent=m; t.className='toast'+(e?' err':'')+' show'; setTimeout(function(){t.classList.remove('show')},2800); }
+
+function openModal(id){ T(id).classList.add('open'); }
+function closeModal(id){ T(id).classList.remove('open'); }
+function openProfile(){ T('profileName').textContent = T('topName').textContent; openModal('mProfile'); }
+function logout(){ closeModal('mProfile'); T('LS').style.display = 'flex'; T('LS').style.opacity = '1'; T('APP').style.display = 'none'; T('lPass').value=''; T('lErr').style.display='none'; }
+
+// Close modal when clicking backdrop
+document.addEventListener('click', function(e){
+  if(e.target.classList.contains('ov')) e.target.classList.remove('open');
+});
+
+function cBadge(c){ var m={Critical:'bc',High:'bh',Medium:'bm',Low:'bl'}; return '<span class="badge '+(m[c]||'bm')+'">'+c+'</span>'; }
+function sBadge(s){ var m={Active:'ba',Standby:'bst',Maintenance:'bmt','On Leave':'bmt',Planned:'bpl','In Progress':'bip',Completed:'bco',Delayed:'bdld'}; return '<span class="badge '+(m[s]||'bm')+'">'+s+'</span>'; }
+function lBadge(l){ var m={Expert:'bex',Senior:'bsr',Junior:'bjr',Trainee:'btr'}; return '<span class="badge '+(m[l]||'bjr')+'">'+l+'</span>'; }
+function empty(msg){ return '<tr><td colspan="99"><div class="es"><div class="ei"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></div><p>'+msg+'</p></div></td></tr>'; }
+function pad(n){ return String(n).padStart(3,'0'); }
+function eqOpts(selId, val){
+  var opts = D.eq.map(function(e){ return '<option'+(e.name==val?' selected':'')+'>'+e.name+'</option>'; }).join('');
+  T(selId).innerHTML = opts;
+}
+function techOpts(selId, val){
+  var opts = D.tch.map(function(t){ return '<option'+(t.name==val?' selected':'')+'>'+t.name+'</option>'; }).join('');
+  T(selId).innerHTML = opts;
+}
+
+// ══ LOGIN ══
+var curUser = null;
+function isAdmin(){ return curUser && curUser.role==='admin'; }
+
+function applyRoleUI(){
+  var admin = isAdmin();
+  // Nav buttons — hide restricted pages for workers
+  var adminOnly = ['equipment','spareparts','technicians','workorders','planning','reports'];
+  document.querySelectorAll('.nb').forEach(function(btn){
+    var m = btn.getAttribute('onclick') && btn.getAttribute('onclick').match(/'(\w+)'/);
+    if(m && adminOnly.indexOf(m[1]) !== -1){
+      btn.style.display = admin ? '' : 'none';
+    }
+  });
+  // Dashboard new WO button — admin only
+  var newWoBtn = document.querySelector('#pg-dashboard .btn.bp');
+  if(newWoBtn) newWoBtn.style.display = admin ? '' : 'none';
+}
+
+function doLogin(){
+  var uName = T('lUser').value;
+  var user = D.users.find(function(x){return x.name===uName});
+  if(!user || T('lPass').value !== (user.password||'1234')){ T('lErr').style.display='block'; return; }
+  curUser = user;
+  T('LS').style.opacity='0';
+  setTimeout(function(){
+    T('LS').style.display='none';
+    T('topName').textContent=user.name;
+    T('topAv').textContent=user.name[0].toUpperCase();
+    // Show role badge
+    var roleEl = T('topRole');
+    if(roleEl){ roleEl.textContent = isAdmin() ? 'Admin' : 'Worker'; roleEl.className = 'badge '+(isAdmin()?'ba':'bmt'); }
+    T('APP').style.display='flex';
+    applyRoleUI();
+    renderDash();
+  }, 500);
+}
+T('lPass').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+
+// ══ NAVIGATION ══
+function goPage(id, btn){
+  // Close ALL modals first
+  document.querySelectorAll('.ov').forEach(function(o){ o.classList.remove('open'); });
+  // Switch pages
+  document.querySelectorAll('.pg').forEach(function(p){ p.classList.remove('on'); });
+  document.querySelectorAll('.nb').forEach(function(b){ b.classList.remove('on'); });
+  var pg = T('pg-'+id);
+  if(!pg){ console.error('Page not found: pg-'+id); return; }
+  pg.classList.add('on');
+  if(btn) btn.classList.add('on');
+  // Render
+  var renders = {
+    dashboard:renderDash, equipment:renderEq, spareparts:renderSp,
+    failures:renderFl, technicians:renderTch, workorders:renderWo,
+    planning:renderCal, reports:renderRep
+  };
+  if(renders[id]) renders[id]();
+}
+
+// Navigate from alert directly to the linked work order and open its view modal
+function goAlertWo(woId){
+  var woBtn = document.querySelector('.nb[onclick*="workorders"]');
+  goPage('workorders', woBtn);
+  setTimeout(function(){
+    // Highlight the row by scrolling to it, then open view modal
+    var wo = D.wo.find(function(w){ return w.id === woId; });
+    if(!wo) return;
+    // Show it in search so the row is visible
+    T('woSearch').value = wo.eq;
+    renderWo();
+    // Open the WO report modal
+    viewRep(woId);
+  }, 80);
+}
+
+// Navigate to WO page and open New WO modal pre-filled for this equipment (no open WO found)
+function goAlertEq(eqName){
+  var woBtn = document.querySelector('.nb[onclick*="workorders"]');
+  goPage('workorders', woBtn);
+  setTimeout(function(){
+    // Pre-fill and open the New Work Order modal for this equipment
+    eqOpts('woEq', eqName);
+    techOpts('woTech', '');
+    T('mWOTitle').textContent = 'New Work Order — ' + eqName;
+    T('woId').value = '';
+    T('woStart').value = new Date().toISOString().split('T')[0];
+    T('woEnd').value = '';
+    T('woDesc').value = '';
+    T('woType').value = 'Preventive';
+    T('woPrio').value = 'High';
+    T('woStat').value = 'Planned';
+    openModal('mWO');
+  }, 80);
+}
+
+// Add data-page to nav buttons so "View All" can find workorders button
+document.querySelectorAll('.nb').forEach(function(b){
+  var m = b.getAttribute('onclick').match(/'(\w+)'/);
+  if(m) b.setAttribute('data-page', m[1]);
+});
+
+// ══ DASHBOARD ══
+function renderDash(){
+  T('ddate').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  var eqCount = D.eq.length;
+  var delayed = D.wo.filter(function(w){return w.stat==='Delayed'}).length;
+  var crit = D.eq.filter(function(e){return e.crit==='Critical'}).length;
+  var active = D.eq.filter(function(e){return e.stat==='Active'}).length;
+  var avail = eqCount ? Math.round(active/eqCount*100) : 0;
+  var techCount = D.tch.length;
+  var techActive = D.tch.filter(function(t){return t.stat==='Active'}).length;
+  var failureCount = D.fl.length;
+  var totalDown = D.fl.reduce(function(a,f){return a+f.down},0);
+  var avgDown = failureCount ? Math.round(totalDown/failureCount*10)/10 : 0;
+  T('dStats').innerHTML =
+    '<div class="sc"><div class="si"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div><div class="sl">Equipment</div><div class="sv" style="color:var(--acc)">'+eqCount+'</div><div class="sh">'+crit+' critical</div></div>'+
+    '<div class="sc"><div class="si"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></div><div class="sl">Work Orders</div><div class="sv" style="color:var(--acc2)">'+D.wo.length+'</div><div class="sh">'+delayed+' delayed</div></div>'+
+    '<div class="sc"><div class="si"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v2z"/><path d="M10 10V5a2 2 0 1 1 4 0v5"/><path d="M4 15v-3a8 8 0 0 1 16 0v3"/></svg></div><div class="sl">Technicians</div><div class="sv" style="color:var(--grn)">'+techCount+'</div><div class="sh">'+techActive+' active</div></div>'+
+    '<div class="sc"><div class="si"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="sl">Availability</div><div class="sv" style="color:var(--yel)">'+avail+'%</div><div class="sh">fleet active</div></div>';
+  // Alerts
+  var today = new Date(); today.setHours(0,0,0,0);
+  var alerts = D.eq.filter(function(e){
+    if(!e.next) return false;
+    var nextDate = new Date(e.next); nextDate.setHours(0,0,0,0);
+    // Only show alert if due within 7 days or overdue
+    if((nextDate - today) / 86400000 > 7) return false;
+    // Check for any completed WO for this equipment
+    var hasCompletedWO = D.wo.some(function(w){
+      return w.eq === e.name && w.stat === 'Completed';
+    });
+    if(!hasCompletedWO) return true; // no completed WO → always alert
+    // Has a completed WO: find the most recent one
+    var lastCompleted = D.wo.reduce(function(latest, w){
+      if(w.eq !== e.name || w.stat !== 'Completed' || !w.end) return latest;
+      return (!latest || w.end > latest) ? w.end : latest;
+    }, null);
+    var lastEnd = new Date(lastCompleted); lastEnd.setHours(0,0,0,0);
+    // If last completed WO ended on or after e.next → maintained, no alert
+    if(lastEnd >= nextDate) return false;
+    // If e.next is already in the past and work was completed at any point → no alert
+    // (next date was never pushed forward in the data, but maintenance happened)
+    if(nextDate <= today) return false;
+    return true;
+  });
+  T('alCnt').textContent = alerts.length+' active';
+  T('dAlerts').innerHTML = alerts.length ? alerts.map(function(e){
+    var d=new Date(e.next); d.setHours(0,0,0,0);
+    var diff=Math.round((d-today)/86400000);
+    // Find the linked open WO for this equipment
+    var linkedWo=D.wo.find(function(w){ return w.eq===e.name && w.stat!=='Completed'; });
+    var woAttr=linkedWo ? ' onclick="goAlertWo('+linkedWo.id+')" style="cursor:pointer" title="Open Work Order #'+String(linkedWo.id).padStart(6,'0')+'"' : ' onclick="goAlertEq(\'' +e.name.replace(/'/g,"\\'")+'\')\" style="cursor:pointer" title="No work order found — click to create one"';
+    return '<div class="ali '+(diff<0?'alr':'aly')+'"'+woAttr+'><div style="font-size:16px;font-family:Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">'+(diff<0?'<svg width="1em" height="1em" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="var(--red)"/></svg>':'<svg width="1em" height="1em" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="var(--yel)"/></svg>')+'</div><div style="flex:1"><div class="alt">'+e.name+'</div><div class="als">'+(diff<0?Math.abs(diff)+' days overdue':'Due in '+diff+' days')+'</div></div><span class="badge '+(diff<0?'bc':'bm')+'">'+(diff<0?'OVERDUE':'DUE SOON')+'</span><span style="font-size:11px;color:var(--txt3);margin-left:4px">'+(linkedWo?'→ WO #'+String(linkedWo.id).padStart(6,'0'):'→ Create WO')+'</span></div>';
+  }).join('') : '<div style="color:var(--txt2);font-size:12px;padding:8px 0"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> No urgent alerts.</div>';
+  // KPIs - calculate real MTBF from failures
+  T('dKPI').innerHTML =
+    '<div class="ki"><div class="kv" style="color:var(--acc)">'+calcMTBF()+'</div><div class="kn">MTBF (days)</div></div>'+
+    '<div class="ki"><div class="kv" style="color:var(--grn)">'+avgDown+'</div><div class="kn">Avg Downtime (h)</div></div>'+
+    '<div class="ki"><div class="kv" style="color:var(--yel)">'+avail+'%</div><div class="kn">Availability</div></div>'+
+    '<div class="ki"><div class="kv" style="color:var(--red)">'+failureCount+'</div><div class="kn">Total Failures</div></div>';
+  // Crit bars
+  var crits=['Critical','High','Medium','Low'], clrs=['var(--red)','var(--org)','var(--yel)','var(--grn)'], tot=eqCount||1;
+  T('dCrit').innerHTML = crits.map(function(c,i){
+    var n=D.eq.filter(function(e){return e.crit===c}).length;
+    return '<div class="mbr"><div class="mbl">'+c+'</div><div class="mbt"><div class="mbf" style="width:'+Math.round(n/tot*100)+'%;background:'+clrs[i]+'"></div></div><div class="mbv" style="color:'+clrs[i]+'">'+n+'</div></div>';
+  }).join('');
+  // Recent WOs
+  var rec=[].concat(D.wo).reverse().slice(0,4);
+  T('dWO').innerHTML = rec.length ? rec.map(function(w){
+    return '<div class="wr"><div class="wnum">#'+pad(w.id)+'</div><div class="wi"><div class="wt">'+w.type+' — '+w.eq+'</div><div class="ws">'+w.tech+' · '+w.start+' → '+w.end+'</div></div>'+sBadge(w.stat)+'</div>';
+  }).join('') : '<div style="color:var(--txt2);font-size:12px;padding:8px">No work orders yet.</div>';
+}
+
+function calcMTBF(){
+  if(D.fl.length < 2) return '—';
+  var dates = D.fl.map(function(f){return new Date(f.date)}).sort(function(a,b){return a-b});
+  var gaps=0;
+  for(var i=1;i<dates.length;i++) gaps += (dates[i]-dates[i-1])/86400000;
+  return Math.round(gaps/(dates.length-1));
+}
+
+// ══ EQUIPMENT ══
+function renderEq(){
+  var s=T('eqSearch').value.toLowerCase(), fc=T('eqFcrit').value, fs=T('eqFstat').value;
+  var rows=D.eq.filter(function(e){ return (e.name+e.type+e.loc+e.brand+e.model+e.obs).toLowerCase().includes(s)&&(!fc||e.crit===fc)&&(!fs||e.stat===fs); });
+  T('eqLbl').textContent=rows.length+' of '+D.eq.length+' equipment';
+  T('eqBody').innerHTML=rows.length?rows.map(function(e){
+    return '<tr><td><b>'+e.id+'</b></td><td><b>'+e.name+'</b></td><td>'+e.type+'</td><td>'+e.loc+'</td><td>'+e.brand+'/'+e.model+'</td><td>'+cBadge(e.crit)+'</td><td>'+sBadge(e.stat)+'</td><td>'+e.next+'</td><td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+e.obs+'</td><td><div class="ab"><button class="acb" onclick="editEq('+e.id+')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="acb del" onclick="confirmDel(\'eq\','+e.id+')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div></td></tr>';
+  }).join(''):empty('No equipment found.');
+}
+
+function openEqModal(){
+  document.getElementById('mEqTitle').textContent='Add Equipment';
+  T('eqId').value='';
+  ['eqName','eqLoc','eqBrand','eqModel','eqObs'].forEach(function(id){T(id).value='';});
+  T('eqType').value='Machine Tool'; T('eqCrit').value='Medium'; T('eqStat').value='Active';
+  T('eqDate').value=''; T('eqNext').value='';
+  openModal('mEq');
+}
+
+function editEq(id){
+  var e=D.eq.find(function(x){return x.id===id}); if(!e) return;
+  T('mEqTitle').textContent='Edit Equipment';
+  T('eqId').value=id; T('eqName').value=e.name; T('eqType').value=e.type;
+  T('eqLoc').value=e.loc; T('eqBrand').value=e.brand; T('eqModel').value=e.model;
+  T('eqCrit').value=e.crit; T('eqStat').value=e.stat; T('eqDate').value=e.date||'';
+  T('eqNext').value=e.next||''; T('eqObs').value=e.obs||'';
+  openModal('mEq');
+}
+
+function saveEq(){
+  var name=T('eqName').value.trim(), loc=T('eqLoc').value.trim();
+  if(!name||!loc){toast('Please fill required fields',true);return;}
+  var id=T('eqId').value;
+  var data={name:name,loc:loc,type:T('eqType').value,brand:T('eqBrand').value.trim(),model:T('eqModel').value.trim(),crit:T('eqCrit').value,stat:T('eqStat').value,date:T('eqDate').value,next:T('eqNext').value,obs:T('eqObs').value.trim()};
+  if(id){ var i=D.eq.findIndex(function(x){return x.id==id}); D.eq[i]=Object.assign({},D.eq[i],data); toast('<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Equipment updated'); }
+  else { data.id=D.nEq++; D.eq.push(data); toast('<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Equipment added'); }
+  closeModal('mEq'); renderEq(); saveStorage();
+}
+
+// ══ SPARE PARTS ══
+function renderSp(){
+  var currentFe = T('spFeq').value;
+  var eqOpts2 = D.eq.map(function(e){return '<option>'+e.name+'</option>';}).join('');
+  T('spFeq').innerHTML='<option value="">All Equipment</option>'+eqOpts2;
+  T('spFeq').value = currentFe;
+  var s=T('spSearch').value.toLowerCase(), fs=T('spFstat').value, fe=T('spFeq').value;
+  var rows=D.sp.filter(function(p){
+    var st=p.qty<=0?'Out of Stock':p.qty<=p.reorder?'Low Stock':'In Stock';
+    return (p.code+p.name+p.eq+p.supplier).toLowerCase().includes(s)&&(!fs||st===fs)&&(!fe||p.eq===fe);
+  });
+  var outOfStock=D.sp.filter(function(p){return p.qty<=0}).length;
+  var lowStock=D.sp.filter(function(p){return p.qty>0&&p.qty<=p.reorder}).length;
+  T('spLbl').textContent=rows.length+' parts · '+outOfStock+' out of stock · '+lowStock+' low stock';
+  T('spBody').innerHTML=rows.length?rows.map(function(p){
+    var st=p.qty<=0?'Out of Stock':p.qty<=p.reorder?'Low Stock':'In Stock';
+    var sc=p.qty<=0?'bc':p.qty<=p.reorder?'bm':'ba';
+    return '<tr><td><b>'+p.id+'</b></td><td><b>'+p.code+'</b></td><td>'+p.name+'</td><td>'+p.eq+'</td><td style="font-weight:600">'+(p.qty<=0?'<span style="color:var(--red)">0</span>':p.qty)+'</td><td>'+p.reorder+'</td><td>'+p.price.toLocaleString()+' DZD</td><td style="font-weight:600">'+(p.qty*p.price).toLocaleString()+' DZD</td><td><span class="badge '+sc+'">'+st+'</span></td><td>'+p.supplier+'</td><td><div class="ab"><button class="acb" onclick="editSp('+p.id+')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="acb del" onclick="confirmDel(\'sp\','+p.id+')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div></td></tr>';
+  }).join(''):empty('No spare parts found.');
+}
+
+function openSpModal(){
+  T('mSpTitle').textContent='Add Spare Part';
+  T('spId').value='';
+  ['spCode','spName','spQty','spReorder','spPrice','spSupplier','spNotes'].forEach(function(id){T(id).value='';});
+  eqOpts('spEq','');
+  openModal('mSp');
+}
+
+function editSp(id){
+  var p=D.sp.find(function(x){return x.id===id}); if(!p) return;
+  T('mSpTitle').textContent='Edit Spare Part';
+  T('spId').value=id; T('spCode').value=p.code; T('spName').value=p.name;
+  T('spQty').value=p.qty; T('spReorder').value=p.reorder; T('spPrice').value=p.price;
+  T('spSupplier').value=p.supplier; T('spNotes').value=p.notes||'';
+  eqOpts('spEq', p.eq);
+  openModal('mSp');
+}
+
+function saveSp(){
+  var code=T('spCode').value.trim(), name=T('spName').value.trim(), eq=T('spEq').value;
+  if(!code||!name||!eq){toast('Please fill required fields',true);return;}
+  var id=T('spId').value;
+  var data={code:code,name:name,eq:eq,qty:parseInt(T('spQty').value)||0,reorder:parseInt(T('spReorder').value)||0,price:parseFloat(T('spPrice').value)||0,supplier:T('spSupplier').value.trim(),notes:T('spNotes').value.trim()};
+  if(id){ var i=D.sp.findIndex(function(x){return x.id==id}); D.sp[i]=Object.assign({},D.sp[i],data); toast('<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Part updated'); }
+  else { data.id=D.nSp++; D.sp.push(data); toast('<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Part added'); }
+  closeModal('mSp'); renderSp(); saveStorage();
+}
+
+// ══ FAILURES ══
+function renderFl(){
+  var currentFe = T('flFeq').value;
+  var eqOpts2=D.eq.map(function(e){return '<option>'+e.name+'</option>';}).join('');
+  T('flFeq').innerHTML='<option value="">All Equipment</option>'+eqOpts2;
+  T('flFeq').value = currentFe;
+  var s=T('flSearch').value.toLowerCase(), fe=T('flFeq').value, fs=T('flFsev').value;
+  var rows=D.fl.filter(function(f){ return (f.date+f.eq+f.type+f.desc+f.root+f.res).toLowerCase().includes(s)&&(!fe||f.eq===fe)&&(!fs||f.sev===fs); });
+  var totalDown=D.fl.reduce(function(a,f){return a+f.down},0);
+  T('flLbl').textContent=rows.length+' failures · Total downtime: '+totalDown+'h · MTBF: '+calcMTBF()+' days';
+  T('flBody').innerHTML=rows.length?rows.map(function(f){
+    var flActions = isAdmin() ? '<div class="ab"><button class="acb" onclick="editFl('+f.id+')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="acb del" onclick="confirmDel(\'fl\','+f.id+')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div>' : '<span style="font-size:10px;color:var(--txt3)">—</span>';
+    return '<tr><td><b>'+f.id+'</b></td><td>'+f.date+'</td><td><b>'+f.eq+'</b></td><td>'+f.type+'</td><td>'+cBadge(f.sev)+'</td><td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+f.desc+'</td><td style="font-weight:600">'+f.down+'h</td><td style="max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+f.root+'</td><td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+f.res+'</td><td>'+flActions+'</td></tr>';
+  }).join(''):empty('No failures logged yet.');
+}
+
+function openFlModal(){
+  T('mFlTitle').textContent='Log Failure';
+  T('flId').value=''; T('flDate').value=new Date().toISOString().split('T')[0];
+  ['flDesc','flRoot','flRes','flDown','flNextMaint'].forEach(function(id){T(id).value='';});
+  T('flType').value='Mechanical'; T('flSev').value='High';
+  eqOpts('flEq','');
+  openModal('mFl');
+}
+
+function editFl(id){
+  if(!isAdmin()){ toast('Admin access required', true); return; }
+  var f=D.fl.find(function(x){return x.id===id}); if(!f) return;
+  T('mFlTitle').textContent='Edit Failure';
+  T('flId').value=id; T('flDate').value=f.date; T('flType').value=f.type;
+  T('flSev').value=f.sev; T('flDesc').value=f.desc; T('flRoot').value=f.root;
+  T('flRes').value=f.res; T('flDown').value=f.down; T('flNextMaint').value='';
+  eqOpts('flEq', f.eq);
+  openModal('mFl');
+}
+
+function saveFl(){
+  var date=T('flDate').value, eq=T('flEq').value, desc=T('flDesc').value.trim();
+  var down=parseFloat(T('flDown').value)||0;
+  if(!date||!eq||!desc){toast('Please fill required fields',true);return;}
+  var id=T('flId').value;
+  var data={date:date,eq:eq,type:T('flType').value,sev:T('flSev').value,desc:desc,root:T('flRoot').value.trim(),res:T('flRes').value.trim(),down:down};
+  if(id){ var i=D.fl.findIndex(function(x){return x.id==id}); D.fl[i]=Object.assign({},D.fl[i],data); toast('<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Failure updated'); }
+  else { data.id=D.nFl++; D.fl.push(data); toast('<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Failure logged'); }
+  // If resolution provided: auto-complete open corrective WOs, update equipment next date + status
+  if(data.res){
+    var nextMaint=T('flNextMaint').value;
+    var eqRec=D.eq.find(function(x){return x.name===eq;});
+    D.wo.forEach(function(w){
+      if(w.eq===eq && w.type==='Corrective' && w.stat!=='Completed'){
+        w.stat='Completed';
+        if(!nextMaint && w.end) nextMaint=w.end;
+      }
+    });
+    if(eqRec){
+      if(nextMaint){
+        var newNext=new Date(nextMaint); newNext.setHours(0,0,0,0);
+        var currentNext=eqRec.next ? new Date(eqRec.next) : null;
+        if(!currentNext || newNext>=currentNext) eqRec.next=nextMaint;
+      }
+      if(eqRec.stat==='Maintenance') eqRec.stat='Active';
+    }
+  }
+  closeModal('mFl'); renderFl(); renderDash(); saveStorage();
+}
+
+// ══ TECHNICIANS ══
+function renderTch(){
+  var s=T('tchSearch').value.toLowerCase(), fs=T('tchFspec').value, fst=T('tchFstat').value;
+  var rows=D.tch.filter(function(t){ return (t.name+t.spec+t.phone+t.email+t.notes).toLowerCase().includes(s)&&(!fs||t.spec===fs)&&(!fst||t.stat===fst); });
+  T('tchLbl').textContent=rows.length+' of '+D.tch.length+' technicians';
+  T('tchBody').innerHTML=rows.length?rows.map(function(t){
+    return '<tr><td><b>'+t.id+'</b></td><td><b>'+t.name+'</b></td><td>'+t.spec+'</td><td>'+lBadge(t.level)+'</td><td>'+t.phone+'</td><td>'+t.email+'</td><td>'+sBadge(t.stat)+'</td><td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+t.notes+'</td><td><div class="ab"><button class="acb" onclick="editTch('+t.id+')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="acb del" onclick="confirmDel(\'tch\','+t.id+')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div></td></tr>';
+  }).join(''):empty('No technicians found.');
+}
+
+function openTchModal(){
+  T('mTchTitle').textContent='Add Technician'; T('tchId').value='';
+  ['tchName','tchPhone','tchEmail','tchAddr','tchNotes'].forEach(function(id){T(id).value='';});
+  T('tchSpec').value='Electromechanics'; T('tchLevel').value='Junior'; T('tchStat').value='Active';
+  openModal('mTch');
+}
+
+function editTch(id){
+  var t=D.tch.find(function(x){return x.id===id}); if(!t) return;
+  T('mTchTitle').textContent='Edit Technician'; T('tchId').value=id;
+  T('tchName').value=t.name; T('tchSpec').value=t.spec; T('tchLevel').value=t.level;
+  T('tchPhone').value=t.phone; T('tchEmail').value=t.email; T('tchStat').value=t.stat;
+  T('tchAddr').value=t.addr||''; T('tchNotes').value=t.notes||'';
+  openModal('mTch');
+}
+
+function saveTch(){
+  var name=T('tchName').value.trim(); if(!name){toast('Please enter a name',true);return;}
+  var id=T('tchId').value;
+  var data={name:name,spec:T('tchSpec').value,level:T('tchLevel').value,phone:T('tchPhone').value.trim(),email:T('tchEmail').value.trim(),stat:T('tchStat').value,addr:T('tchAddr').value.trim(),notes:T('tchNotes').value.trim()};
+  if(id){ var i=D.tch.findIndex(function(x){return x.id==id}); D.tch[i]=Object.assign({},D.tch[i],data); toast('<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Technician updated'); }
+  else { data.id=D.nTch++; D.tch.push(data); toast('<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Technician added'); }
+  closeModal('mTch'); renderTch(); saveStorage();
+}
+
+// ══ WORK ORDERS ══
+function prepWO(){
+  eqOpts('woEq',''); techOpts('woTech','');
+  T('mWOTitle').textContent='New Work Order'; T('woId').value='';
+  ['woStart','woEnd','woDesc'].forEach(function(id){T(id).value='';});
+  T('woType').value='Preventive'; T('woPrio').value='High'; T('woStat').value='Planned';
+}
+
+function renderWo(){
+  var s=T('woSearch').value.toLowerCase(), fs=T('woFstat').value, ft=T('woFtype').value;
+  var rows=D.wo.filter(function(w){ return (w.type+w.eq+w.tech+w.desc).toLowerCase().includes(s)&&(!fs||w.stat===fs)&&(!ft||w.type===ft); });
+  var delayed=D.wo.filter(function(w){return w.stat==='Delayed'}).length;
+  T('woLbl').textContent=rows.length+' of '+D.wo.length+' orders · '+delayed+' delayed';
+  T('woBody').innerHTML=rows.length?rows.map(function(w){
+    return '<tr><td><b>#'+pad(w.id)+'</b></td><td>'+w.type+'</td><td>'+w.eq+'</td><td>'+w.tech+'</td><td>'+cBadge(w.prio)+'</td><td>'+w.start+'</td><td>'+w.end+'</td><td>'+sBadge(w.stat)+'</td><td><div class="ab"><button class="acb" onclick="viewRep('+w.id+')" title="Report"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></button><button class="acb" onclick="editWo('+w.id+')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="acb del" onclick="confirmDel(\'wo\','+w.id+')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div></td></tr>';
+  }).join(''):empty('No work orders found.');
+}
+
+function editWo(id){
+  var w=D.wo.find(function(x){return x.id===id}); if(!w) return;
+  eqOpts('woEq',w.eq); techOpts('woTech',w.tech);
+  T('mWOTitle').textContent='Edit Work Order'; T('woId').value=id;
+  T('woType').value=w.type; T('woPrio').value=w.prio; T('woStart').value=w.start;
+  T('woEnd').value=w.end; T('woStat').value=w.stat; T('woDesc').value=w.desc||'';
+  openModal('mWO');
+}
+
+function saveWo(){
+  var eq=T('woEq').value, tech=T('woTech').value, start=T('woStart').value, end=T('woEnd').value;
+  if(!eq||!tech||!start||!end){toast('Please fill required fields',true);return;}
+  var id=T('woId').value;
+  var data={type:T('woType').value,prio:T('woPrio').value,eq:eq,tech:tech,start:start,end:end,stat:T('woStat').value,desc:T('woDesc').value.trim()};
+  if(id){ var i=D.wo.findIndex(function(x){return x.id==id}); D.wo[i]=Object.assign({},D.wo[i],data); toast('\u2705 Work order updated'); }
+  else { data.id=D.nWo++; D.wo.push(data); toast('\u2705 Work order created'); }
+  // If marked Completed, push equipment next date forward and restore status
+  if(data.stat==='Completed' && end){
+    var eqRec=D.eq.find(function(e){ return e.name===eq; });
+    if(eqRec){
+      var endDate=new Date(end); endDate.setHours(0,0,0,0);
+      var currentNext=eqRec.next ? new Date(eqRec.next) : null;
+      if(!currentNext || endDate>=currentNext){ eqRec.next=end; }
+      if(eqRec.stat==='Maintenance') eqRec.stat='Active';
+    }
+  }
+  closeModal('mWO'); renderWo(); renderDash(); saveStorage();
+}
+
+function viewRep(id){
+  var w=D.wo.find(function(x){return x.id===id}); if(!w) return;
+  T('repNum').textContent='Order N° '+String(w.id).padStart(6,'0');
+  T('repEq').textContent=w.eq; T('repTech').textContent=w.tech;
+  T('repType').textContent=w.type; T('repPrio').textContent=w.prio;
+  T('repPeriod').textContent=w.start+' → '+w.end; T('repStat').textContent=w.stat;
+  T('repDesc').textContent=w.desc||'—'; T('repWork').value=''; T('repParts').value='';
+  openModal('mRep');
+}
+
+// ══ DELETE ══
+function confirmDel(type, id){
+  openModal('mConfirm');
+  T('cfOk').onclick = function(){
+    if(type==='eq') { D.eq=D.eq.filter(function(x){return x.id!==id}); renderEq(); }
+    if(type==='sp') { D.sp=D.sp.filter(function(x){return x.id!==id}); renderSp(); }
+    if(type==='fl') { D.fl=D.fl.filter(function(x){return x.id!==id}); renderFl(); }
+    if(type==='tch'){ D.tch=D.tch.filter(function(x){return x.id!==id}); renderTch(); }
+    if(type==='wo') { D.wo=D.wo.filter(function(x){return x.id!==id}); renderWo(); }
+    if(type==='user'){ D.users = D.users.filter(function(x){return x.id!==id}); renderUsers(); renderUserSelect(); }
+    saveStorage();
+    closeModal('mConfirm');
+    toast('<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Deleted');
+  };
+}
+
+// ---------------- Users ----------------
+function renderUsers(){
+  var rows = D.users.map(function(u){
+    var roleBadge = u.role==='admin'
+      ? '<span class="badge ba">Admin</span>'
+      : '<span class="badge bmt">Worker</span>';
+    return '<tr><td><b>'+u.id+'</b></td><td><b>'+u.name+'</b></td><td>'+roleBadge+'</td><td><div class="ab"><button class="acb" onclick="editUser('+u.id+')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="acb del" onclick="confirmDel(\'user\','+u.id+')"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div></td></tr>';
+  }).join('');
+  T('userBody').innerHTML = rows || '<tr><td colspan="4"><div class="es"><div class="ei"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></div><p>No users found.</p></div></td></tr>';
+}
+
+function openUsers(){ renderUsers(); openModal('mUsers'); }
+
+function openUserForm(id){
+  if(!isAdmin()){ toast('Admin access required', true); return; }
+  T('uId').value = id || '';
+  T('uName').value = '';
+  T('uPass').value = '';
+  T('uRole').value = 'worker';
+  T('userFormTitle').textContent = id ? 'Edit User' : 'Add User';
+  if(id){
+    var u = D.users.find(function(x){ return x.id===id; });
+    if(u){ T('uName').value = u.name; T('uRole').value = u.role || 'worker'; }
+  }
+  T('userForm').style.display = 'block';
+  T('uName').focus();
+}
+
+function closeUserForm(){
+  T('userForm').style.display = 'none';
+  T('uId').value = ''; T('uName').value = ''; T('uPass').value = ''; T('uRole').value = 'worker';
+}
+
+function saveUser(){
+  if(!isAdmin()){ toast('Admin access required', true); return; }
+  var nm = T('uName').value.trim();
+  if(!nm){ toast('Name is required', true); return; }
+  var pw = T('uPass').value.trim() || '1234';
+  var role = T('uRole').value || 'worker';
+  var id = T('uId').value;
+  if(id){
+    var i = D.users.findIndex(function(x){ return x.id==id; });
+    D.users[i].name = nm;
+    D.users[i].role = role;
+    if(T('uPass').value.trim()) D.users[i].password = pw;
+    toast('<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> User updated');
+  } else {
+    D.users.push({ id: D.nUsers++, name: nm, password: pw, role: role });
+    toast('<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> User added');
+  }
+  closeUserForm();
+  renderUsers(); renderUserSelect(); saveStorage();
+}
+
+function openUserModal(id){ openUserForm(id); }
+function editUser(id){ openUserForm(id); }
+
+// ══ CALENDAR ══
+var calY=new Date().getFullYear(), calM=new Date().getMonth();
+var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function renderCal(){
+  T('calLbl').textContent=MONTHS[calM]+' '+calY;
+  var days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  var html=days.map(function(d){return '<div class="cdh">'+d+'</div>';}).join('');
+  var first=new Date(calY,calM,1).getDay(), offset=first===0?6:first-1;
+  var total=new Date(calY,calM+1,0).getDate();
+  var today=new Date();
+  var evMap={};
+  D.wo.forEach(function(w){if(!evMap[w.start])evMap[w.start]=[];evMap[w.start].push(w);});
+  for(var i=0;i<offset;i++) html+='<div class="cc om"></div>';
+  for(var d=1;d<=total;d++){
+    var ds=calY+'-'+String(calM+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var isTd=today.getFullYear()===calY&&today.getMonth()===calM&&today.getDate()===d;
+    var evs=evMap[ds]||[];
+    var evH=evs.map(function(w){
+      var c=w.stat==='Completed'?'evg':w.stat==='Delayed'?'evr':w.stat==='In Progress'?'evb':'evy';
+      return '<div class="cev '+c+'" onclick="viewRep('+w.id+')" title="'+w.type+' | '+w.eq+' | '+w.tech+'">'+w.eq.substring(0,14)+'</div>';
+    }).join('');
+    html+='<div class="cc'+(isTd?' td':'')+'"><div class="cnum">'+d+'</div>'+evH+'</div>';
+  }
+  T('calGrid').innerHTML=html;
+}
+function calNav(d){calM+=d;if(calM>11){calM=0;calY++;}if(calM<0){calM=11;calY--;}renderCal();}
+function calToday(){calY=new Date().getFullYear();calM=new Date().getMonth();renderCal();}
+
+// ══ REPORTS ══
+function renderRep(){
+  var tot=D.wo.length||1, completed=D.wo.filter(function(w){return w.stat==='Completed'}).length;
+  var delayed=D.wo.filter(function(w){return w.stat==='Delayed'}).length;
+  var inprog=D.wo.filter(function(w){return w.stat==='In Progress'}).length;
+  var prev=D.wo.filter(function(w){return w.type==='Preventive'}).length;
+  var pp=Math.round(prev/tot*100);
+  var totalDown=D.fl.reduce(function(a,f){return a+f.down},0);
+  T('repStats').innerHTML=
+    '<div class="sc"><div class="si"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="sl">Completed WO</div><div class="sv" style="color:var(--grn)">'+completed+'</div><div class="sh">work orders</div></div>'+
+    '<div class="sc"><div class="si"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="sl">In Progress</div><div class="sv" style="color:var(--acc2)">'+inprog+'</div><div class="sh">ongoing</div></div>'+
+    '<div class="sc"><div class="si"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="sl">Total Failures</div><div class="sv" style="color:var(--red)">'+D.fl.length+'</div><div class="sh">'+totalDown+'h total downtime</div></div>'+
+    '<div class="sc"><div class="si"><svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div><div class="sl">Stock Alerts</div><div class="sv" style="color:var(--yel)">'+D.sp.filter(function(p){return p.qty<=p.reorder}).length+'</div><div class="sh">parts low or out</div></div>';
+  var wl={};
+  D.wo.forEach(function(w){wl[w.tech]=(wl[w.tech]||0)+1;});
+  var maxWL=Math.max.apply(null,Object.values(wl).concat([1]));
+  var clrs=['var(--acc)','var(--acc2)','var(--grn)','var(--yel)','var(--org)','var(--red)'];
+  T('repWL').innerHTML=Object.entries(wl).map(function(e,i){
+    return '<div class="mbr"><div class="mbl">'+e[0].split(' ')[0]+'</div><div class="mbt"><div class="mbf" style="width:'+Math.round(e[1]/maxWL*100)+'%;background:'+clrs[i%clrs.length]+'"></div></div><div class="mbv">'+e[1]+'</div></div>';
+  }).join('');
+  
+    T('repSplit').innerHTML=
+    '<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span>Preventive</span><span style="color:var(--grn);font-weight:700">'+pp+'%</span></div><div class="mbt" style="height:9px"><div class="mbf" style="width:'+pp+'%;background:linear-gradient(90deg,var(--acc2),var(--acc))"></div></div></div>'+
+    '<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><span>Corrective</span><span style="color:var(--red);font-weight:700">'+(100-pp)+'%</span></div><div class="mbt" style="height:9px"><div class="mbf" style="width:'+(100-pp)+'%;background:var(--red)"></div></div></div>';
+  var crits=['Critical','High','Medium','Low'], clrs2=['var(--red)','var(--org)','var(--yel)','var(--grn)'], totEq=D.eq.length||1;
+  T('repCrit').innerHTML=crits.map(function(c,i){
+    var n=D.eq.filter(function(e){return e.crit===c}).length;
+    return '<div class="mbr"><div class="mbl">'+c+'</div><div class="mbt"><div class="mbf" style="width:'+Math.round(n/totEq*100)+'%;background:'+clrs2[i]+'"></div></div><div class="mbv" style="color:'+clrs2[i]+'">'+n+'</div></div>';
+  }).join('');
+}
+</script>
+</body>
+</html>
+<!-- ══ PWA ══ -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(r => console.log('SW:', r.scope))
+      .catch(e => console.warn('SW error:', e));
+  });
+}
+
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  var btn = document.getElementById('installBtn');
+  if (btn) btn.style.display = 'flex';
+});
+
+function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function(c) {
+    if (c.outcome === 'accepted') toast('<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> MaintainPro installed!');
+    deferredPrompt = null;
+    var btn = document.getElementById('installBtn');
+    if (btn) btn.style.display = 'none';
+  });
+}
+
+window.addEventListener('appinstalled', function() {
+  toast('<svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> App installed successfully!');
+});
+</script>
